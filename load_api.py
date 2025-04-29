@@ -3,7 +3,15 @@ import requests
 import json
 from pathlib import Path
 import os
+from dotenv import load_dotenv
 
+# load_dotenv()
+
+# db_path = os.getenv("db_path")
+# if not db_path:
+#         raise ValueError("db_path is not set. Check your .env file!")
+
+db_path = Path(__file__).parent.parent / "ads_data_warehouse.duckdb"
 
 def _get_ads(url_for_search, params):
     headers = {"accept": "application/json"}
@@ -48,7 +56,7 @@ def jobsearch_resource(params):
 def run_pipeline(query, table_name, occupation_fields):
     pipeline = dlt.pipeline(
         pipeline_name="jobads_demo",
-        destination=dlt.destinations.duckdb("ads_data_warehouse.duckdb"),
+        destination=dlt.destinations.duckdb(str(db_path)),
         dataset_name="staging",
     )
 
