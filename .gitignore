@@ -6,6 +6,16 @@ __pycache__/
 # C extensions
 *.so
 
+# duckdb
+*.duckdb*
+*.wal
+*.tmp/
+
+# dbt
+target/
+dbt_packages/
+logs/
+
 # Distribution / packaging
 .Python
 build/
