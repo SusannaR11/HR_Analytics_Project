@@ -11,7 +11,7 @@ from dotenv import load_dotenv
 # if not db_path:
 #         raise ValueError("db_path is not set. Check your .env file!")
 
-db_path = Path(__file__).parent.parent / "ads_data_warehouse.duckdb"
+db_path = Path(__file__).parent / "ads_data_warehouse.duckdb"
 
 def _get_ads(url_for_search, params):
     headers = {"accept": "application/json"}
