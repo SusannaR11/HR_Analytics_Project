@@ -9,3 +9,5 @@ select
     relevance,
     application_deadline
 from job_ads
+
+-- need to add auxilliary_attributes...
