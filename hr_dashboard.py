@@ -2,10 +2,13 @@ import streamlit as st
 import duckdb
 from pathlib import Path
 from streamlit_option_menu import option_menu
+from utilities.read_DB import AdsDB
+
+db = AdsDB()
 
 # Connecting to the data warehouse
-db_path = Path(__file__).parent / "ads_data_warehouse.duckdb"
-connection = duckdb.connect(database=str(db_path), read_only=True)
+# db_path = Path(__file__).parent / "ads_data_warehouse.duckdb"
+# connection = duckdb.connect(database=str(db_path), read_only=True)
 
 # Function for a dropdown menu to select different charts to see
 def chart_dropdown_menu():
