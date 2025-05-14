@@ -9,11 +9,9 @@ WITH employer_name AS (
 
 SELECT
     {{ dbt_utils.generate_surrogate_key([
-        'employer__name', 
         'workplace_address__municipality', 
-        'workplace_address__country',
         'employer__workplace'
-    ]) }} AS employer_location_id,
+    ]) }} AS employer_id,
     
     employer__name,
     COALESCE(workplace_address__municipality, 'Ej angivet') AS municipality,
