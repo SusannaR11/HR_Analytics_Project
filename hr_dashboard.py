@@ -1,8 +1,7 @@
 import streamlit as st
-import duckdb
-from pathlib import Path
 from streamlit_option_menu import option_menu
 from utilities.read_DB import AdsDB
+from visualisation.charts import pie_occupation_grouped
 
 db = AdsDB()
 
@@ -47,3 +46,12 @@ if selected == "Yrken med social inriktning":
 if selected == "Data/IT":
     st.title (f"{selected}")
     chart_dropdown_menu()
+    
+    # pie_chart ads per occupation role
+    df_occupation = db.query("""
+    SELECT occupation, COUNT(*) AS num_ads
+    FROM mart_data_it
+    GROUP BY occupation
+    ORDER BY num_ads DESC
+    """)
+    pie_occupation_grouped(df_occupation)
