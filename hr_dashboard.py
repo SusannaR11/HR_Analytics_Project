@@ -18,7 +18,14 @@ def chart_dropdown_menu():
 
     if 'Pie Chart' in selected_charts:
         st.write("Pie Chart")
-
+        if selected == "Data/IT":
+            df_occupation = db.query("""
+                SELECT occupation, COUNT(*) AS num_ads
+                FROM mart_data_it
+                GROUP BY occupation
+                ORDER BY num_ads DESC
+                """)
+        pie_occupation_grouped(df_occupation)
     if 'Spider Chart' in selected_charts:
         st.write("Spider Chart")
 
@@ -46,12 +53,5 @@ if selected == "Yrken med social inriktning":
 if selected == "Data/IT":
     st.title (f"{selected}")
     chart_dropdown_menu()
-    
-    # pie_chart ads per occupation role
-    df_occupation = db.query("""
-    SELECT occupation, COUNT(*) AS num_ads
-    FROM mart_data_it
-    GROUP BY occupation
-    ORDER BY num_ads DESC
-    """)
-    pie_occupation_grouped(df_occupation)
+
+        

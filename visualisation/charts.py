@@ -31,7 +31,7 @@ def pie_occupation_grouped(df, top_n=10):
             "occupation": "Others",
             "num_ads": other_count
         }])
-        df_combined = pd.concat([df_top, df_other], ignore_index=True)
+        df_combined = pd.concat([df_top, df_other], ignore_index=True, verify_integrity=True) # behov?
     else:
         df_combined = df_top
 
