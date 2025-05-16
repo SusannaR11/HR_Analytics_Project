@@ -17,26 +17,16 @@ from utilities.read_DB import AdsDB
 db = AdsDB()
 
 
-# Pie-chart function for top 10 number of ads/occupational role
+# Pie-chart function for top 10 number of vacancies/occupational role
 def pie_occupation_grouped(df, top_n=10):
 
     # sort df and select top 10
-    df_top = df.sort_values(by="num_ads",
+    df_top = df.sort_values(by="num_vacancies",
                             ascending=False).head(top_n)
 
-    # count excessive ads data as other
-    other_count = df["num_ads"].sum() - df_top["num_ads"].sum()
-    if other_count > 0:
-        df_other = pd.DataFrame([{
-            "occupation": "Others",
-            "num_ads": other_count
-        }])
-        df_combined = pd.concat([df_top, df_other], ignore_index=True, verify_integrity=True) # behov?
-    else:
-        df_combined = df_top
 
-    fig = px.pie(df_combined, names="occupation", values="num_ads",
-                 title="Topp 10 ads per occupation")
+    fig = px.pie(df_top, names="occupation", values="num_vacancies",
+                 title="Topp 10 vacancies per occupation")
 
     fig.update_traces(
     textinfo='percent',

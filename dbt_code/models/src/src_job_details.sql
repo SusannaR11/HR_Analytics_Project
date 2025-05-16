@@ -13,5 +13,4 @@ select
     scope_of_work__min as scope_of_work_min,
     scope_of_work__max as scope_of_work_max
 from stg_job_ads
-
  
