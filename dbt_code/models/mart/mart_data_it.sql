@@ -28,6 +28,7 @@ select
     f.vacancies,
     f.relevance,
     e.employer_name,
+    e.workplace_city,
     e.employer_workplace,
     e.workplace_country,
     e.workplace_region,
