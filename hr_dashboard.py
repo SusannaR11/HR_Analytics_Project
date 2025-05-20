@@ -23,11 +23,11 @@ def chart_dropdown_menu():
         # ensure field=Data/IT b4 run
         if selected == "Data/IT": 
             df_occupation = db.query("""
-                    SELECT occupation, 
-                    count(vacancies) AS num_vacancies
+                    SELECT occupation as beteckning, 
+                    sum(vacancies) AS antal
                     FROM marts.mart_data_it
                     GROUP BY occupation
-                    ORDER BY num_vacancies DESC""")
+                    ORDER BY antal DESC""")
             
             pie_occupation_grouped(df_occupation)
             db.close()

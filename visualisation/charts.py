@@ -22,25 +22,19 @@ def pie_occupation_grouped(df, top_n=10):
 
     
     # sort df and select top 10
-    df_top = df.sort_values(by="num_vacancies",
+    df_top = df.sort_values(by="antal",
                             ascending=False).head(top_n)
 
 
-    fig = px.pie(df_top, names="occupation", values="num_vacancies",
-                 title="Topp 10 vacancies per occupation")
+    fig = px.pie(df_top, names="beteckning",
+                         values="antal",
+                         labels={"beteckning":"Beteckning", "antal":"Antal lediga tjänster"},
+                         title="Topp 10 lediga tjänster per yrkesbeteckning")
 
     fig.update_traces(
     textinfo='percent',
-    #hoverinfo='label+percent+value',
-    textposition='inside',
-    #insidetextorientation='radial',
-    #pull=[0.05 if name == "Other" else 0 for name in df_combined["occupation"]]
-)
-
-#     fig.update_layout(
-#     uniformtext_minsize=12,
-#     uniformtext_mode='hide'
-# )
+    hoverinfo='label+percent+value',
+    textposition='inside')
     st.plotly_chart(fig, use_container_width=True)
 
 
@@ -49,45 +43,42 @@ def pie_occupation_grouped(df, top_n=10):
 
 def vacancies_per_locality():
 
-    
+    # create Dataframe from query
     df = db.query("""SELECT
-                  COUNT(vacancies) as count,
-                  --SUM(vacancies) as sum,
-                  --ANY_VALUE(workplace_region),
-                  workplace_city as locality,
-                  --ANY_VALUE(occupation)
+                  SUM(vacancies) as sum,
+                  occupation_field as field,
+                  workplace_city as locality
                   FROM marts.mart_data_it
-                  GROUP BY locality
-                  ORDER BY count DESC
+                  GROUP BY locality, field
+                  ORDER BY sum DESC
                   """)
+    # header for chart
+    st.subheader("Antal lediga tjänster per ort")
 
-    df_top = df.sort_values(by="count",
+    # checkbox for missing city data
+    missing_city_data = st.checkbox("Inkludera annonser där 'Stad ej angiven'", value=False) 
+
+    # check user input
+    if not missing_city_data:
+        df = df[df["locality"] != "stad ej angiven"]
+    
+    # Sort values after top top 10
+    df_top = df.sort_values(by="sum",
                             ascending=False).head(10)
 
-
+    # create figure
     fig = px.bar(df_top, 
-                 x= "locality",
-                 y="count",
-                 labels={"locality": "Stad", "count": "Antal tjänster"},
-                 title="Vacancies per Locality top 10")
+                 x="locality",
+                 y="sum",
+                 labels={"locality": "Stad", "sum": "Antal lediga tjänster"},
+                 #title="Top 10 Vacancies per Locality",
+                 hover_name='field',
+                 hover_data=[],
+                 color='locality',
+                 text_auto=True)
     #fig.show()
     st.plotly_chart(fig)
 
-                 
-    # f.vacancies,
-    # f.relevance,
-    # e.employer_name,
-    # e.employer_workplace,
-    # e.workplace_country,
-    # e.workplace_region,
-    # e.workplace_municipality,
-    # o.occupation,
-    # o.occupation_group,
-    # o.occupation_field,
-    # f.application_deadline,
-    # jd.description,
-    # jd.description_html,
-    # jd.duration,
-    # jd.salary_type,
-    # jd.salary_description,
-    # jd.working_hours_type
+    # KPI
+    total_ads = df["sum"].sum()
+    st.metric(label="Totalt antal lediga tjänster", value=int(total_ads))
