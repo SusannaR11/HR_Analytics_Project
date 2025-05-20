@@ -6,7 +6,7 @@
 # etc
 # You should include at least four meaningful KPI/metrics and visualizations on your dashboard that are able
 # to improve efficiency of the work of talent acquisition specialists in this HR agency.
-import duckdb as db
+
 import pandas as pd
 import streamlit as st
 import matplotlib.pyplot as plt
@@ -20,6 +20,7 @@ db = AdsDB()
 # Pie-chart function for top 10 number of vacancies/occupational role
 def pie_occupation_grouped(df, top_n=10):
 
+    
     # sort df and select top 10
     df_top = df.sort_values(by="num_vacancies",
                             ascending=False).head(top_n)
@@ -46,26 +47,28 @@ def pie_occupation_grouped(df, top_n=10):
 # WTH hur många ads finns de??
 # SKA MAN HA EN KPIS MED MASSA BRA GRUNDDATA?
 
-def vacancies_per_locality(df):
+def vacancies_per_locality():
 
-    # df_top = df.sort_values(by="count",
-    #                         ascending=False).head(top_n)
-
-    df_top = df.query("""SELECT
+    
+    df = db.query("""SELECT
                   COUNT(vacancies) as count,
-                  SUM(vacancies) as sum,
-                  ANY_VALUE(workplace_region),
-                  workplace_municipality as locality,
-                  ANY_VALUE(occupation)
-                  FROM mart_data_it
+                  --SUM(vacancies) as sum,
+                  --ANY_VALUE(workplace_region),
+                  workplace_city as locality,
+                  --ANY_VALUE(occupation)
+                  FROM marts.mart_data_it
                   GROUP BY locality
                   ORDER BY count DESC
                   """)
 
+    df_top = df.sort_values(by="count",
+                            ascending=False).head(10)
+
+
     fig = px.bar(df_top, 
                  x= "locality",
                  y="count",
-                 labels={""},
+                 labels={"locality": "Stad", "count": "Antal tjänster"},
                  title="Vacancies per Locality top 10")
     #fig.show()
     st.plotly_chart(fig)

@@ -67,7 +67,7 @@ if __name__ == "__main__":
     os.chdir(working_directory)
 
     query = ""
-    table_name = "job_ads"
+    table_name = "data_field_job_ads" # changed accoring to study material
 
    # "Säkerhet och bevakning", "Yrken med social inriktning", "Data/IT"
     occupation_fields = ("E7hm_BLq_fqZ", "GazW_2TU_kJw", "apaJ_2ja_LuF")

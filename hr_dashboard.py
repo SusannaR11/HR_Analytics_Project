@@ -24,13 +24,14 @@ def chart_dropdown_menu():
         if selected == "Data/IT": 
             df_occupation = db.query("""
                     SELECT occupation, 
-                    SUM(vacancies) AS num_vacancies
-                    FROM mart_data_it
+                    count(vacancies) AS num_vacancies
+                    FROM marts.mart_data_it
                     GROUP BY occupation
                     ORDER BY num_vacancies DESC""")
             
             pie_occupation_grouped(df_occupation)
-    
+            db.close()
+
     if 'Spider Chart' in selected_charts:
         st.write("Spider Chart")
 
@@ -38,7 +39,8 @@ def chart_dropdown_menu():
         st.write("Bar Chart")
         if selected == "Data/IT":
         # run barchart for vacancies by city
-            vacancies_per_locality(db) 
+            vacancies_per_locality() 
+            db.close()
 
 # Sidebar for different options
 with st.sidebar:
