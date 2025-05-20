@@ -1,7 +1,7 @@
 import streamlit as st
 from streamlit_option_menu import option_menu
 from utilities.read_DB import AdsDB
-from visualisation.charts import pie_occupation_grouped
+from visualisation.charts import pie_occupation_grouped, vacancies_per_locality
 
 db = AdsDB()
 
@@ -20,7 +20,8 @@ def chart_dropdown_menu():
         st.write("Pie Chart")
 
         # query for occupation 
-        if selected == "Data/IT":
+        # ensure field=Data/IT b4 run
+        if selected == "Data/IT": 
             df_occupation = db.query("""
                     SELECT occupation, 
                     SUM(vacancies) AS num_vacancies
@@ -35,6 +36,9 @@ def chart_dropdown_menu():
 
     if 'Bar Chart' in selected_charts:
         st.write("Bar Chart")
+        if selected == "Data/IT":
+        # run barchart for vacancies by city
+            vacancies_per_locality(db) 
 
 # Sidebar for different options
 with st.sidebar:

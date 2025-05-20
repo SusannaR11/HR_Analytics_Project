@@ -6,7 +6,7 @@
 # etc
 # You should include at least four meaningful KPI/metrics and visualizations on your dashboard that are able
 # to improve efficiency of the work of talent acquisition specialists in this HR agency.
-
+import duckdb as db
 import pandas as pd
 import streamlit as st
 import matplotlib.pyplot as plt
@@ -44,3 +44,47 @@ def pie_occupation_grouped(df, top_n=10):
 
 
 # WTH hur många ads finns de??
+# SKA MAN HA EN KPIS MED MASSA BRA GRUNDDATA?
+
+def vacancies_per_locality(df):
+
+    # df_top = df.sort_values(by="count",
+    #                         ascending=False).head(top_n)
+
+    df_top = df.query("""SELECT
+                  COUNT(vacancies) as count,
+                  SUM(vacancies) as sum,
+                  ANY_VALUE(workplace_region),
+                  workplace_municipality as locality,
+                  ANY_VALUE(occupation)
+                  FROM mart_data_it
+                  GROUP BY locality
+                  ORDER BY count DESC
+                  """)
+
+    fig = px.bar(df_top, 
+                 x= "locality",
+                 y="count",
+                 labels={""},
+                 title="Vacancies per Locality top 10")
+    #fig.show()
+    st.plotly_chart(fig)
+
+                 
+    # f.vacancies,
+    # f.relevance,
+    # e.employer_name,
+    # e.employer_workplace,
+    # e.workplace_country,
+    # e.workplace_region,
+    # e.workplace_municipality,
+    # o.occupation,
+    # o.occupation_group,
+    # o.occupation_field,
+    # f.application_deadline,
+    # jd.description,
+    # jd.description_html,
+    # jd.duration,
+    # jd.salary_type,
+    # jd.salary_description,
+    # jd.working_hours_type
