@@ -16,6 +16,7 @@ select
 from
     job_ads #}
 -- need to add auxilliary_attributes...
+-- fct table
 with job_ads as (select * from {{ ref("src_job_ads") }})
 
 select
