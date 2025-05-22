@@ -1,3 +1,4 @@
+
 -- create table auxiliary_attributes
 
 with auxiliary_attributes as (select * from {{ ref('src_auxiliary_attributes') }})
@@ -16,4 +17,3 @@ select
     case when driver_license then 'Ja' else 'Nej' end as driver_license_text,
     case when access_to_own_car then 'Ja' else 'Nej' end as access_to_own_car_text
 from auxiliary_attributes
--- need to check null? max or distinct? surrogate? scrs job ads eller stgn?

@@ -8,3 +8,4 @@ select
     max(occupation_field) as occupation_field
 from dim_occupation
 group by occupation
+
