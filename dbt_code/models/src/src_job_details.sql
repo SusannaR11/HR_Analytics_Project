@@ -6,6 +6,7 @@ select
     description__text as description,
     description__text_formatted as description_html,
     duration__label as duration,
+    employment_type__label as employment_type,
     salary_type__label as salary_type,
     salary_description, 
     working_hours_type__label as working_hours_type,

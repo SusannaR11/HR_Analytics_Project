@@ -3,13 +3,6 @@ import requests
 import json
 from pathlib import Path
 import os
-from dotenv import load_dotenv
-
-# load_dotenv()
-
-# db_path = os.getenv("db_path")
-# if not db_path:
-#         raise ValueError("db_path is not set. Check your .env file!")
 
 db_path = Path(__file__).parent / "ads_data_warehouse.duckdb"
 
@@ -24,8 +17,8 @@ def _get_ads(url_for_search, params):
 def jobsearch_resource(params):
     """
     params should include at least:
-      - "q": your query
-      - "limit": page size (e.g. 100)
+    - "q": your query
+    - "limit": page size (e.g. 100)
     """
     url = "https://jobsearch.api.jobtechdev.se"
     url_for_search = f"{url}/search"
@@ -76,7 +69,7 @@ if __name__ == "__main__":
     query = ""
     table_name = "job_ads"
 
-   # "Säkerhet och bevakning", "Yrken med social inriktning", "Data/IT"
+# "Säkerhet och bevakning", "Yrken med social inriktning", "Data/IT"
     occupation_fields = ("E7hm_BLq_fqZ", "GazW_2TU_kJw", "apaJ_2ja_LuF")
 
     run_pipeline(query, table_name, occupation_fields)
