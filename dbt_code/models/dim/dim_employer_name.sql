@@ -1,3 +1,4 @@
+
 WITH employer_name AS (
     SELECT 
         employer__name,
@@ -30,5 +31,6 @@ GROUP BY
     workplace_address__municipality, 
     workplace_address__country,
     employer__workplace
+
 
 
