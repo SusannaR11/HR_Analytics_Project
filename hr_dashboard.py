@@ -18,29 +18,19 @@ def chart_dropdown_menu():
 
     if 'Pie Chart' in selected_charts:
         st.write("Pie Chart")
-
-        # query for occupation 
-        # ensure field=Data/IT b4 run
-        if selected == "Data/IT": 
-            df_occupation = db.query("""
-                    SELECT occupation as beteckning, 
-                    sum(vacancies) AS antal
-                    FROM marts.mart_data_it
-                    GROUP BY occupation
-                    ORDER BY antal DESC""")
-            
-            pie_occupation_grouped(df_occupation)
-            db.close()
+        #if selected == "Data/IT":
+            # pie_occupation_grouped()
+            # db.close() # method for closing
 
     if 'Spider Chart' in selected_charts:
         st.write("Spider Chart")
 
     if 'Bar Chart' in selected_charts:
         st.write("Bar Chart")
-        if selected == "Data/IT":
-        # run barchart for vacancies by city
-            vacancies_per_locality() 
-            db.close()
+        #if selected == "Data/IT":
+            # run barchart for vacancies by city
+            # vacancies_per_locality() 
+            # db.close()
 
 # Sidebar for different options
 with st.sidebar:

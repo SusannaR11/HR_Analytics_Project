@@ -12,6 +12,6 @@ class AdsDB:
     def query(self, sql):
         return self.conn.execute(sql).fetchdf()
 
-    # function for closing connection
+    # function for closing connection to duckdb
     def close(self):
         self.conn.close()
