@@ -6,8 +6,8 @@ from visualisation.charts import pie_occupation_grouped, vacancies_per_locality
 db = AdsDB()
 
 # Connecting to the data warehouse
-# db_path = Path(__file__).parent / "ads_data_warehouse.duckdb"
-# connection = duckdb.connect(database=str(db_path), read_only=True)
+db_path = Path(__file__).parent / "ads_data_warehouse.duckdb"
+connection = duckdb.connect(database=str(db_path), read_only=True)
 
 # Function for a dropdown menu to select different charts to see
 def chart_dropdown_menu():
