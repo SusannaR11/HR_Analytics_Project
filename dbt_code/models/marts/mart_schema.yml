@@ -1,0 +1,47 @@
+version: 2
+
+models:
+  - name: occupation_data_it
+    description: "Denna modell filtrerar jobbannonser inom IT- och data och skapar en vy med relevant information."
+    columns:
+      - name: job_details_id
+        description: "Unikt ID för jobbannons"
+        tests:
+          - not_null
+          - unique
+      - name: headline
+        description: "Rubrik för jobbannons"
+      - name: occupation
+        description: "Yrkesbeteckning"
+      - name: occupation_field
+        description: "Yrkesområde"
+
+  - name: occupation_sakerhet_bevakning
+    description: "Denna modell filtrerar jobbannonser inom säkerhet och bevakning och skapar en vy med relevant information."
+    columns:
+      - name: job_details_id
+        description: "Unikt ID för jobbannons"
+        tests:
+          - not_null
+          - unique
+      - name: headline
+        description: "Rubrik för jobbannons"
+      - name: occupation
+        description: "Yrkesbeteckning"
+      - name: occupation_field
+        description: "Yrkesområde"
+
+  - name: occupation_socialt_arbete
+    description: "Denna modell filtrerar jobbannonser inom socialt arbete och skapar en vy med relevant information."
+    columns:
+      - name: job_details_id
+        description: "Unikt ID för jobbannons"
+        tests:
+          - not_null
+          - unique
+      - name: headline
+        description: "Rubrik för jobbannons"
+      - name: occupation
+        description: "Yrkesbeteckning"
+      - name: occupation_field
+        description: "Yrkesområde"

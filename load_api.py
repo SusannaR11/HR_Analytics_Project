@@ -17,8 +17,8 @@ def _get_ads(url_for_search, params):
 def jobsearch_resource(params):
     """
     params should include at least:
-      - "q": your query
-      - "limit": page size (e.g. 100)
+    - "q": your query
+    - "limit": page size (e.g. 100)
     """
     url = "https://jobsearch.api.jobtechdev.se"
     url_for_search = f"{url}/search"
