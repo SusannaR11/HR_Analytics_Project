@@ -1,7 +1,9 @@
 import streamlit as st
-import duckdb
-from pathlib import Path
 from streamlit_option_menu import option_menu
+from utilities.read_DB import AdsDB
+from visualisation.charts import pie_occupation_grouped, vacancies_per_locality
+
+db = AdsDB()
 
 # Connecting to the data warehouse
 db_path = Path(__file__).parent / "ads_data_warehouse.duckdb"
@@ -16,12 +18,19 @@ def chart_dropdown_menu():
 
     if 'Pie Chart' in selected_charts:
         st.write("Pie Chart")
+        #if selected == "Data/IT":
+            # pie_occupation_grouped()
+            # db.close() # method for closing
 
     if 'Spider Chart' in selected_charts:
         st.write("Spider Chart")
 
     if 'Bar Chart' in selected_charts:
         st.write("Bar Chart")
+        #if selected == "Data/IT":
+            # run barchart for vacancies by city
+            # vacancies_per_locality() 
+            # db.close()
 
 # Sidebar for different options
 with st.sidebar:
@@ -44,3 +53,5 @@ if selected == "Yrken med social inriktning":
 if selected == "Data/IT":
     st.title (f"{selected}")
     chart_dropdown_menu()
+
+        
