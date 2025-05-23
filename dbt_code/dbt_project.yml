@@ -30,5 +30,5 @@ models:
       +materialized: view
 
     mart:
-      +schema: marts
-      +materialized: table
+      +schema: mart
+      +materialized: view
