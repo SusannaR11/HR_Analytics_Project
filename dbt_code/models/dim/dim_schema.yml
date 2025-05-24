@@ -1,0 +1,44 @@
+version: 2
+
+models:
+  - name: dim_auxiliary_attributes
+    description: "Auxiliary boolean and text attributes derived from job ads."
+    columns:
+      - name: auxiliary_attributes_id
+        description: "Surrogate key based on job ad ID"
+        tests:
+          - not_null
+          - unique
+
+  - name: dim_employer_name
+    description: "Normalized employer data with location fields and workplace info."
+    columns:
+      - name: employer_id
+        description: "Surrogate key generated from workplace and municipality"
+        tests:
+          - not_null
+          - unique
+      - name: employer__name
+        description: "Raw employer name"
+
+  - name: dim_job_details
+    description: "Job descriptions and contract metadata"
+    columns:
+      - name: job_details_id
+        description: "Surrogate key from job ad ID"
+        tests:
+          - not_null
+          - unique
+      - name: headline
+        description: "Title of the job posting"
+
+  - name: dim_occupation
+    description: "Occupation concepts with group and field mappings"
+    columns:
+      - name: occupation_id
+        description: "Surrogate key based on occupation label"
+        tests:
+          - not_null
+          - unique
+      - name: occupation
+        description: "Occupation label"
