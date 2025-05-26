@@ -1,4 +1,6 @@
 import streamlit as st
+import duckdb as db
+from pathlib import Path
 from streamlit_option_menu import option_menu
 from utilities.read_DB import AdsDB
 from visualisation.charts import pie_occupation_grouped, vacancies_per_locality
@@ -6,7 +8,7 @@ from visualisation.charts import pie_occupation_grouped, vacancies_per_locality
 db = AdsDB()
 
 # Connecting to the data warehouse
-db_path = Path(__file__).parent / "ads_data_warehouse.duckdb"
+db_path = Path(__file__).parent / "../ads_data_warehouse.duckdb"
 connection = duckdb.connect(database=str(db_path), read_only=True)
 
 # Function for a dropdown menu to select different charts to see

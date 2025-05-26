@@ -1,6 +1,6 @@
 -- testing duplicates
 select job_details_id, count(*) as antal
-from {{ ref("mart_data_it") }}
+from {{ ref("occupation_data_it") }}
 group by job_details_id
 having
     count(*) > 1
