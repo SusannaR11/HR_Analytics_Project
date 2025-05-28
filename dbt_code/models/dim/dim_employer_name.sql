@@ -8,7 +8,7 @@ WITH employer_name_raw AS (
         workplace_address__municipality,
         workplace_address__country,
         employer__workplace
-    FROM {{ source('job_ads', 'stg_ads') }}
+    FROM {{ ref('src_employer_name') }}
 ),
 
 deduped_employers as (
