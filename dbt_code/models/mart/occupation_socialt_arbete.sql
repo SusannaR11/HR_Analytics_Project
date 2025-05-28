@@ -21,7 +21,7 @@ select
     job.headline,
     occ.occupation,
     occ.occupation_field,
-    emp.employer__name,
+    emp.employer_name,
     emp.municipality,
     emp.country,
     fct.vacancies,
@@ -40,4 +40,5 @@ left join emp on fct.employer_id = emp.employer_id
 left join job on fct.job_details_id = job.job_details_id
 left join aux on fct.auxiliary_attributes_id = aux.auxiliary_attributes_id
 
-where lower(occ.occupation_field) = 'säkerhet och bevakning'
+where lower(occ.occupation_field) = 'yrken med social inriktning'
+

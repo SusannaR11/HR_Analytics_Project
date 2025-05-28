@@ -19,7 +19,7 @@ models:
   - name: src_employer_name
     description: "Contains employer name and location data from job ads."
     columns:
-      - name: employer__name
+      - name: employer__name # ska dessa matcha src eller använda alias?
         description: "Name of the employer"
       - name: workplace_address__municipality
         description: "Municipality of the workplace"

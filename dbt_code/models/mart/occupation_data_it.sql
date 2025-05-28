@@ -34,7 +34,7 @@ select
     job.headline,
     occ.occupation,
     occ.occupation_field,
-    emp.employer__name,
+    emp.employer_name,
     emp.municipality,
     emp.country,
     fct.vacancies,
