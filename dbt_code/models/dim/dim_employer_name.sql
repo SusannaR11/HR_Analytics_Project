@@ -1,4 +1,3 @@
-
 -- Added deduplication logic to stop 'join' fan out in mart-models from 
 -- job_ads_id
 
@@ -8,7 +7,7 @@ WITH employer_name_raw AS (
         workplace_address__municipality,
         workplace_address__country,
         employer__workplace
-    FROM {{ source('job_ads', 'stg_ads') }}
+    FROM {{ ref('src_employer_name') }}
 ),
 
 deduped_employers as (
@@ -25,7 +24,7 @@ row_number() over (
     from employer_name_raw
 )
  SELECT
-    {{ dbt_utils.generate_surrogate_key(['workplace_address__municipality', 'employer__workplace']) }} AS employer_id,
+    {{ dbt_utils.generate_surrogate_key(['employer__workplace', 'workplace_address__municipality']) }} AS employer_id,
     employer__name,
     COALESCE(workplace_address__municipality, 'Ej angivet') AS municipality,
     COALESCE(workplace_address__country, 'Ej angivet') AS country,
@@ -45,6 +44,3 @@ WHERE rn = 1
 --    workplace_address__municipality, 
 --    workplace_address__country,
 --    employer__workplace
-
-
-
