@@ -1,5 +1,5 @@
 import streamlit as st
-import duckdb as db
+import duckdb
 from pathlib import Path
 from streamlit_option_menu import option_menu
 from utilities.read_DB import AdsDB
