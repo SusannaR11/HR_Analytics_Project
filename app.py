@@ -20,7 +20,7 @@ import google.generativeai as genai
 
 from dbt_code.LLM.dashboard_queries import get_descriptions_for_field, get_job_titles_by_field, get_description_for_title
 from dbt_code.LLM.dashboard_logic import generate_field_average_soft_skills, generate_soft_skills, generate_hard_skills, clean_skill_labels
-#from visualisation.charts import soft_skills_radar
+from visualisation.charts import soft_skills_radar
 
 # -- Anslutning till databasen
 db_path = Path(__file__).parent / "ads_data_warehouse.duckdb"
