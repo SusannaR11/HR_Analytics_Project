@@ -82,14 +82,14 @@ def chart_dropdown_menu(df):
         
 
         # Filtrerar efter kommun
-        kommuner = df_filtered['municipality'].dropna().unique().tolist()
-        kommuner.sort()
-        selected_kommuner = st.multiselect("Välj kommun(er) att visa separat (övriga grupperas)", kommuner)
+        municipality = df_filtered['municipality'].dropna().unique().tolist()
+        municipality.sort()
+        selected_municipality = st.multiselect("Välj kommun(er) att visa separat (övriga grupperas)", municipality)
         
-        if selected_kommuner:
+        if selected_municipality:
             # Varje yrke blir grupperat + samlar ihop resten som övrigt
-            selected_df = df_filtered[df_filtered['municipality'].isin(selected_kommuner)]
-            others_df = df_filtered[~df_filtered['municipality'].isin(selected_kommuner)]
+            selected_df = df_filtered[df_filtered['municipality'].isin(selected_municipality)]
+            others_df = df_filtered[~df_filtered['municipality'].isin(selected_municipality)]
             others_sum = others_df['num_vacancies'].sum()
             others_row = {'municipality': 'Övriga', 'num_vacancies': others_sum}
             selected_grouped = selected_df.groupby(['municipality', 'occupation'], as_index=False)['num_vacancies'].sum()
