@@ -28,10 +28,17 @@ def show_kpis(df):
 
         st.subheader("🚀 Viktiga KPI:er för Talent Acquisition")
         
-        cols = st.columns(3)
-        cols[0].metric(label="Totalt antal jobb", value=total_vacancies)
-        cols[1].metric(label="Yrket med flest jobb", value=top_occupation)
-        cols[2].metric(label="Kommun med flest jobb", value=top_municipality)
+        cols1 = st.columns(1)
+        cols1[0].metric(label="Totalt antal jobb", value=total_vacancies, border=True)
+        cols2 = st.columns(1)
+        cols2[0].metric(label="Yrket med flest jobb", value=top_occupation, border=True)
+        cols3 = st.columns(1)
+        cols3[0].metric(label="Kommun med flest jobb", value=top_municipality, border=True)
+
+        # cols = st.columns(3)
+        # cols[0].metric(label="Totalt antal jobb", value=total_vacancies, label_visibility="visible", border=True, help=str(df["num_vacancies"].sum()))
+        # cols[0].metric(label="Yrket med flest jobb", value=top_occupation, label_visibility="visible", border=True, help=str(df.iloc[0]["occupation"]))
+        # cols[0].metric(label="Kommun med flest jobb", value=top_municipality, label_visibility="visible", border=True, help=str(df.iloc[0]["municipality"]))
 
 # -- Funktion för diagram-menyn med Streamlit
 def chart_dropdown_menu(df):
