@@ -1,4 +1,3 @@
-
 #----Källa----
 # URL: https://duckdb.org/docs/stable/clients/python/dbapi
 # URL: https://docs.streamlit.io/get-started/fundamentals/main-concepts
@@ -6,11 +5,13 @@
 # URL: https://github.com/victoryhb/streamlit-option-menu/blob/master/streamlit_option_menu/__init__.py
 # --AIgineerAB den föregående python kursen--
 # URL: https://github.com/AIgineerAB/Python_OPA24/tree/main/10_plotly_express
+
 import streamlit as st
 import duckdb
 from pathlib import Path
 from streamlit_option_menu import option_menu
 import plotly.express as px
+import pandas as pd
 
 # -- Anslutning till databasen
 db_path = Path(__file__).parent / "ads_data_warehouse.duckdb"
@@ -34,19 +35,117 @@ def show_kpis(df):
 
 # -- Funktion för diagram-menyn med Streamlit
 def chart_dropdown_menu(df):
+    st.subheader("📊 Välj vad du vill visualisera:")
+    visualize_option = st.selectbox(
+        "Vad vill du visualisera?",
+        options=[
+            "Antal jobb per kommun",
+            "Fördelning av jobb per yrke",
+            "Lönetyp",
+            "Omfattning"
+        ]
+    )
+    
+    plot_df = df
+    
+    if visualize_option == "Antal jobb per kommun":
+        # Filtrerar efter land
+        countries = df['country'].dropna().unique().tolist()
+        countries.sort()
+        selected_country = st.selectbox("Välj land:", options=["Alla"] + countries)
+        
+        if selected_country != "Alla":
+            df_filtered = df[df['country'] == selected_country]
+        else:
+            df_filtered = df.copy()
+        
+
+        # Filtrerar efter kommun
+        kommuner = df_filtered['municipality'].dropna().unique().tolist()
+        kommuner.sort()
+        selected_kommuner = st.multiselect("Välj kommun(er) att visa separat (övriga grupperas)", kommuner)
+        
+        if selected_kommuner:
+            # Varje yrke blir grupperat + samlar ihop resten som övrigt
+            selected_df = df_filtered[df_filtered['municipality'].isin(selected_kommuner)]
+            others_df = df_filtered[~df_filtered['municipality'].isin(selected_kommuner)]
+            others_sum = others_df['num_vacancies'].sum()
+            others_row = {'municipality': 'Övriga', 'num_vacancies': others_sum}
+            selected_grouped = selected_df.groupby(['municipality', 'occupation'], as_index=False)['num_vacancies'].sum()
+            others_df_grouped = pd.DataFrame([others_row])
+            plot_df = pd.concat([selected_grouped, others_df_grouped], ignore_index=True)
+        else:
+            # Visar top 10 yrken + övriga om inga yrken är valda
+            grouped = df_filtered.groupby(['municipality', 'occupation'], as_index=False)['num_vacancies'].sum()
+            top10 = grouped.groupby('municipality')['num_vacancies'].sum().nlargest(10).index
+            top10_df = grouped[grouped['municipality'].isin(top10)]
+            others_df = grouped[~grouped['municipality'].isin(top10)]
+            others_sum = others_df['num_vacancies'].sum()
+            others_row = {'municipality': 'Övriga', 'num_vacancies': others_sum}
+            others_df_grouped = pd.DataFrame([others_row])
+            plot_df = pd.concat([top10_df, others_df_grouped], ignore_index=True)
+
+    elif visualize_option == "Fördelning av jobb per yrke":
+        # Filtrerar efter yrken
+        jobs = df['occupation'].dropna().unique().tolist()
+        jobs.sort()
+        selected_jobs = st.multiselect("Välj yrke/yrken (övriga grupperas)", jobs)
+        
+        if selected_jobs:
+            # Varje yrke blir grupperat + samlar ihop resten som övrigt
+            selected_df = df[df['occupation'].isin(selected_jobs)]
+            others_df = df[~df['occupation'].isin(selected_jobs)]
+            others_sum = others_df['num_vacancies'].sum()
+            others_row = {'occupation': 'Övriga', 'num_vacancies': others_sum}
+            selected_grouped = selected_df.groupby(['occupation'], as_index=False)['num_vacancies'].sum()
+            others_df_grouped = pd.DataFrame([others_row])
+            plot_df = pd.concat([selected_grouped, others_df_grouped], ignore_index=True)
+        else:
+            # Visar top 10 yrken + övriga om inga yrken är valda
+            grouped = df.groupby(['occupation'], as_index=False)['num_vacancies'].sum()
+            top10 = grouped.nlargest(10, 'num_vacancies')['occupation']
+            top10_df = grouped[grouped['occupation'].isin(top10)]
+            others_df = grouped[~grouped['occupation'].isin(top10)]
+            others_sum = others_df['num_vacancies'].sum()
+            others_row = {'occupation': 'Övriga', 'num_vacancies': others_sum}
+            others_df_grouped = pd.DataFrame([others_row])
+            plot_df = pd.concat([top10_df, others_df_grouped], ignore_index=True)
+
+    elif visualize_option == "Lönetyp":
+        plot_df = df.groupby(['salary_type'], as_index=False)['num_vacancies'].sum()
+    elif visualize_option == "Omfattning":
+        plot_df = df.groupby(['working_hours_type'], as_index=False)['num_vacancies'].sum()
+    
+    # Val för vilka charts man vill se
     st.subheader("📊 Välj diagramtyp:")
     selected_charts = st.multiselect(
         label="Diagramtyper",
         options=["Donut Chart", "Bar Chart"],
         default=["Donut Chart"]
     )
-
+    
+    # Donut chart visas om vald
     if "Donut Chart" in selected_charts:
-        fig = px.pie(df, names="occupation", values="num_vacancies", title="Fördelning av jobb per yrke", hole=0.4)
+        if visualize_option == "Antal jobb per kommun":
+            fig = px.pie(plot_df, names="municipality", values="num_vacancies", title="Jobb per kommun", hole=0.4)
+        elif visualize_option == "Fördelning av jobb per yrke":
+            fig = px.pie(plot_df, names="occupation", values="num_vacancies", title="Jobb per yrke", hole=0.4)
+        elif visualize_option == "Lönetyp":
+            fig = px.pie(plot_df, names="salary_type", values="num_vacancies", title="Lönetyp", hole=0.4)
+        elif visualize_option == "Omfattning":
+            fig = px.pie(plot_df, names="working_hours_type", values="num_vacancies", title="Omfattning", hole=0.4)
         st.plotly_chart(fig)
 
+    # Bar chart visas om vald
     if "Bar Chart" in selected_charts:
-        fig = px.bar(df, x="municipality", y="num_vacancies", title="Antal jobb per kommun", color="occupation")
+        if visualize_option == "Antal jobb per kommun":
+            fig = px.bar(plot_df, x="municipality", y="num_vacancies", color="occupation", title="Jobb per kommun")
+        elif visualize_option == "Fördelning av jobb per yrke":
+            fig = px.bar(plot_df, x="occupation", y="num_vacancies", title="Jobb per yrke")
+        elif visualize_option == "Lönetyp":
+            fig = px.bar(plot_df, x="salary_type", y="num_vacancies", title="Lönetyp")
+        elif visualize_option == "Omfattning":
+            fig = px.bar(plot_df, x="working_hours_type", y="num_vacancies", title="Omfattning")
         st.plotly_chart(fig)
 
 # -- Sidomeny med option_menu, marinblå färg
@@ -74,28 +173,27 @@ with st.sidebar:
     )
 
 st.write(f"Du valde: {selected}")
-# -- SQL-query baserad på vald bransch
+
 if selected != "Home":
+    # SQL-fråga
     query = f"""
-    SELECT occupation, COUNT(*) AS num_vacancies, municipality, occupation_field
+    SELECT occupation, COUNT(*) AS num_vacancies, municipality, country, occupation_field, salary_type, working_hours_type
     FROM (
-        SELECT occupation, municipality, 'Data/IT' AS occupation_field FROM mart.occupation_data_it
+        SELECT occupation, municipality, country, salary_type, working_hours_type, 'Data/IT' AS occupation_field FROM mart.occupation_data_it
         UNION ALL
-        SELECT occupation, municipality, 'Säkerhet och Bevakning' AS occupation_field FROM mart.occupation_sakerhet_bevakning
+        SELECT occupation, municipality, country, salary_type, working_hours_type, 'Säkerhet och bevakning' AS occupation_field FROM mart.occupation_sakerhet_bevakning
         UNION ALL
-        SELECT occupation, municipality, 'Yrken med Social Inriktning' AS occupation_field FROM mart.occupation_socialt_arbete
+        SELECT occupation, municipality, country, salary_type, working_hours_type, 'Yrken med social inriktning' AS occupation_field FROM mart.occupation_socialt_arbete
     ) AS combined_data
-    WHERE lower(occupation_field) = '{selected.lower()}'
-    GROUP BY occupation, municipality, occupation_field
+    WHERE lower(occupation_field) = lower('{selected}')
+    GROUP BY occupation, municipality, country, occupation_field, salary_type, working_hours_type
     ORDER BY num_vacancies DESC;
     """
-    
+
     df = connection.execute(query).fetchdf()
-    
-    # -- Visa KPI:er och diagram
+
     st.title(f"{selected} 🌍")
     show_kpis(df)
     chart_dropdown_menu(df)
 
-# -- Stäng anslutningen
 connection.close()
