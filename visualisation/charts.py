@@ -7,29 +7,29 @@
 # You should include at least four meaningful KPI/metrics and visualizations on your dashboard that are able
 # to improve efficiency of the work of talent acquisition specialists in this HR agency.
 
-import pandas as pd
 import streamlit as st
-import matplotlib.pyplot as plt
 import plotly_express as px
-from utilities.read_DB import AdsDB
+from visualisation.kpis import occupation_query, locality_query, total_ads
 
-# init db connection
-db = AdsDB()
+# Pie-chart function vacancies/occupational role
+def pie_occupation():
+
+    df = occupation_query()
+
+    top = st.checkbox("Visa top 10", value=False) 
+
+    # check user input
+    if top:
+        # sort df and select top 10
+        df_top = df.sort_values(by="antal",
+                                ascending=False).head(10)
+        df = df_top
 
 
-# Pie-chart function for top 10 number of vacancies/occupational role
-def pie_occupation_grouped(df, top_n=10):
-
-    
-    # sort df and select top 10
-    df_top = df.sort_values(by="antal",
-                            ascending=False).head(top_n)
-
-
-    fig = px.pie(df_top, names="beteckning",
+    fig = px.pie(df, names="beteckning",
                          values="antal",
                          labels={"beteckning":"Beteckning", "antal":"Antal lediga tjänster"},
-                         title="Topp 10 lediga tjänster per yrkesbeteckning")
+                         title="Lediga tjänster per yrkesbeteckning")
 
     fig.update_traces(
     textinfo='percent',
@@ -37,21 +37,10 @@ def pie_occupation_grouped(df, top_n=10):
     textposition='inside')
     st.plotly_chart(fig, use_container_width=True)
 
-
-# WTH hur många ads finns de??
-# SKA MAN HA EN KPIS MED MASSA BRA GRUNDDATA?
-
 def vacancies_per_locality():
 
     # create Dataframe from query
-    df = db.query("""SELECT
-                  SUM(vacancies) as sum,
-                  occupation_field as field,
-                  workplace_city as locality
-                  FROM marts.mart_data_it
-                  GROUP BY locality, field
-                  ORDER BY sum DESC
-                  """)
+    df = locality_query()
     # header for chart
     st.subheader("Antal lediga tjänster per ort")
 
@@ -60,9 +49,9 @@ def vacancies_per_locality():
 
     # check user input
     if not missing_city_data:
-        df = df[df["locality"] != "stad ej angiven"]
+        df = df[df["locality"] != "Ej angivet"]
     
-    # Sort values after top top 10
+    # Sort values after top 10
     df_top = df.sort_values(by="sum",
                             ascending=False).head(10)
 
@@ -71,7 +60,6 @@ def vacancies_per_locality():
                  x="locality",
                  y="sum",
                  labels={"locality": "Stad", "sum": "Antal lediga tjänster"},
-                 #title="Top 10 Vacancies per Locality",
                  hover_name='field',
                  hover_data=[],
                  color='locality',
@@ -80,5 +68,4 @@ def vacancies_per_locality():
     st.plotly_chart(fig)
 
     # KPI
-    total_ads = df["sum"].sum()
-    st.metric(label="Totalt antal lediga tjänster", value=int(total_ads))
+    total_ads(df_top)
