@@ -146,13 +146,32 @@ def chart_dropdown_menu(df):
     # Bar chart visas om vald
     if "Bar Chart" in selected_charts:
         if visualize_option == "Antal jobb per kommun":
-            fig = px.bar(plot_df, x="municipality", y="num_vacancies", color="occupation", title="Jobb per kommun")
+            fig = px.bar(plot_df, x="municipality", y="num_vacancies", color="occupation", title="Jobb per kommun", 
+                    labels={"municipality": "Kommun", "num_vacancies": "Antal lediga tjänster"},
+                    hover_name='occupation',
+                    hover_data={"occupation": False, "municipality":True, "num_vacancies": True},
+                    text_auto=True)
+            
         elif visualize_option == "Fördelning av jobb per yrke":
-            fig = px.bar(plot_df, x="occupation", y="num_vacancies", title="Jobb per yrke")
+            fig = px.bar(plot_df, x="occupation", y="num_vacancies", color="occupation", title="Jobb per yrke",
+                    labels={"occupation": "Beteckning", "num_vacancies": "Antal lediga tjänster"},
+                    hover_name='occupation',
+                    hover_data={"occupation": False, "num_vacancies": True},
+                    text_auto=True)
+
         elif visualize_option == "Lönetyp":
-            fig = px.bar(plot_df, x="salary_type", y="num_vacancies", title="Lönetyp")
+            fig = px.bar(plot_df, x="salary_type", y="num_vacancies", color="salary_type", title="Lönetyp",
+                    labels={"salary_type": "Lönetyp", "num_vacancies": "Antal lediga tjänster"},
+                    hover_name='salary_type',
+                    hover_data={"salary_type": False, "num_vacancies": True},
+                    text_auto=True)
+            
         elif visualize_option == "Omfattning":
-            fig = px.bar(plot_df, x="working_hours_type", y="num_vacancies", title="Omfattning")
+            fig = px.bar(plot_df, x="working_hours_type", y="num_vacancies", color="working_hours_type", title="Omfattning",
+                    labels={"working_hours_type": "Beteckning", "num_vacancies": "Antal lediga tjänster"},
+                    hover_name='working_hours_type',
+                    hover_data={"working_hours_type": False, "num_vacancies": True},
+                    text_auto=True)
         st.plotly_chart(fig)
 
 # -- Sidomeny med option_menu, marinblå färg
