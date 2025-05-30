@@ -20,7 +20,7 @@ import google.generativeai as genai
 
 from dbt_code.LLM.dashboard_queries import get_descriptions_for_field, get_job_titles_by_field, get_description_for_title
 from dbt_code.LLM.dashboard_logic import generate_field_average_soft_skills, generate_soft_skills, generate_hard_skills, clean_skill_labels
-from visualisation.charts import soft_skills_radar
+#from visualisation.charts import soft_skills_radar
 
 # -- Anslutning till databasen
 db_path = Path(__file__).parent / "ads_data_warehouse.duckdb"
@@ -232,7 +232,7 @@ selected_job = st.selectbox("Välj ett yrke att analysera:", [""] + job_titles)
 if selected_job:
     desc = get_description_for_title(connection, selected_job)
 
-    st.markdown("### Topp 5 Hard Skills")
+    st.markdown("#### Topp 5 Hard Skills för {selected_job}")
     hard_result = generate_hard_skills(desc, selected_job)
     hard_json = re.search(r"\{[\s\S]*?\}", hard_result, re.DOTALL)
     if hard_json:
@@ -240,7 +240,7 @@ if selected_job:
         for skill, score in hard_skills.items():
             st.markdown(f"- **{skill}**: {score}/10")
 
-    st.markdown("### Topp 5 Soft Skills")
+    st.markdown("#### Topp 5 Soft Skills för {selected_job}")
     soft_result = generate_soft_skills(desc, selected_job)
     soft_json = re.search(r"\{[\s\S]*?\}", soft_result, re.DOTALL)
     if soft_json:
@@ -250,7 +250,7 @@ if selected_job:
             st.markdown(f"- **{skill}**: {score}/10")
 
     # --- Button to trigger spider chart ---
-    if st.button("Visa Spider Chart"):
+    if st.button("Visa i Spider Chart"):
         field_blob = get_descriptions_for_field(connection, dashboard_field)
         field_result = generate_field_average_soft_skills(field_blob, dashboard_field)
         match_field = re.search(r"\{[\s\S]*?\}", field_result, re.DOTALL)
