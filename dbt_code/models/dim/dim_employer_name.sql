@@ -1,4 +1,3 @@
-
 -- Added deduplication logic to stop 'join' fan out in mart-models from 
 -- job_ads_id
 
@@ -45,6 +44,3 @@ WHERE rn = 1
 --    workplace_address__municipality, 
 --    workplace_address__country,
 --    employer__workplace
-
-
-
