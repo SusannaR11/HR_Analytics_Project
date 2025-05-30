@@ -38,7 +38,7 @@ models:
         description: "Employer workplace name"
       - name: occupation__label
         description: "Occupation label"
-      - name: occupation_field
+      - name: occupation_field__label # occupation_field
         description: "Occupation field label"
 
   - name: src_job_details
@@ -49,23 +49,23 @@ models:
         tests:
           - not_null
           - unique
-      - name: description
+      - name: description__text # description
         description: "Plain text job description"
-      - name: duration
+      - name: duration__label # duration
         description: "Job duration label"
-      - name: employment_type
+      - name: employment_type__label # employment_type
         description: "Employment type label"
-      - name: working_hours_type
+      - name: working_hours_type__label # working_hours_type
         description: "Working hours type label"
 
   - name: src_occupation
     description: "Occupation classification and hierarchy info from job ads."
     columns:
-      - name: occupation_id
+      - name: occupation__concept_id as occupation_id #occupation_id
         description: "Occupation concept ID"
         tests:
           - not_null
-      - name: occupation_group
+      - name: occupation_group__label #occupation_group
         description: "Occupation group label"
-      - name: occupation_field
+      - name: occupation_field__label #occupation_field
         description: "Occupation field label"
