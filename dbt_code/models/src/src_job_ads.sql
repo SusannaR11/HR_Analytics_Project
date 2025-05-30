@@ -10,9 +10,9 @@ with
 
 select
     id,
-    employer__workplace,
-    workplace_address__municipality,
-    occupation__label,
+    employer__workplace as employer_workplace,
+    workplace_address__municipality as workplace_address_municipality,
+    occupation__label as occupation_label,
     number_of_vacancies as vacancies,
     relevance,
     application_deadline,

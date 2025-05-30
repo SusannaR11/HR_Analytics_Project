@@ -3,8 +3,8 @@ import duckdb
 
 # class for reading data from local warehouse.
 class AdsDB:
-    def __init__(self, db_file="ads_data_warehouse.duckdb"):
-        self.db_path = Path(__file__).parent.parent / db_file
+    def __init__(self, db_file="../ads_data_warehouse.duckdb"):
+        self.db_path = Path(__file__).parent / db_file
         self.conn = duckdb.connect(str(self.db_path), read_only=True)
         
 
