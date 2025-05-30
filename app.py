@@ -12,10 +12,24 @@ from pathlib import Path
 from streamlit_option_menu import option_menu
 import plotly.express as px
 import pandas as pd
+import os
+from dotenv import load_dotenv
+import json
+import re
+import google.generativeai as genai
+
+from dbt_code.LLM.dashboard_queries import get_descriptions_for_field, get_job_titles_by_field, get_description_for_title
+from dbt_code.LLM.dashboard_logic import generate_field_average_soft_skills, generate_soft_skills, generate_hard_skills, clean_skill_labels
+from visualisation.charts import soft_skills_radar
 
 # -- Anslutning till databasen
 db_path = Path(__file__).parent / "ads_data_warehouse.duckdb"
 connection = duckdb.connect(database=str(db_path), read_only=True)
+
+# --- Anslutning till google Gemini LLM
+load_dotenv()
+genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
+model = genai.GenerativeModel("gemini-2.0-flash")
 
 # -- Funktion för att skapa KPI:er med Streamlit-kolumner
 def show_kpis(df):
@@ -202,5 +216,59 @@ if selected != "Home":
     st.title(f"{selected} 🌍")
     show_kpis(df)
     chart_dropdown_menu(df)
+
+#----- Spider/Radar Chart sektion under visualiseringar ----
+
+st.subheader("\U0001F52C Jämför kompetenser")
+
+# Field selector
+dashboard_field = st.selectbox("Välj yrkesområde för att jämföra mjuka kompetenser:", ["Data/IT", "Säkerhet och bevakning", "Yrken med social inriktning"])
+
+# Job selector
+job_titles = get_job_titles_by_field(connection, dashboard_field)
+selected_job = st.selectbox("Välj ett yrke att analysera:", [""] + job_titles)
+
+# Skill generation
+if selected_job:
+    desc = get_description_for_title(connection, selected_job)
+
+    st.markdown("### Topp 5 Hard Skills")
+    hard_result = generate_hard_skills(desc, selected_job)
+    hard_json = re.search(r"\{[\s\S]*?\}", hard_result, re.DOTALL)
+    if hard_json:
+        hard_skills = json.loads(hard_json.group())
+        for skill, score in hard_skills.items():
+            st.markdown(f"- **{skill}**: {score}/10")
+
+    st.markdown("### Topp 5 Soft Skills")
+    soft_result = generate_soft_skills(desc, selected_job)
+    soft_json = re.search(r"\{[\s\S]*?\}", soft_result, re.DOTALL)
+    if soft_json:
+        soft_skills = json.loads(soft_json.group())
+        cleaned_soft = clean_skill_labels(soft_skills)
+        for skill, score in cleaned_soft.items():
+            st.markdown(f"- **{skill}**: {score}/10")
+
+    # --- Button to trigger spider chart ---
+    if st.button("Visa Spider Chart"):
+        field_blob = get_descriptions_for_field(connection, dashboard_field)
+        field_result = generate_field_average_soft_skills(field_blob, dashboard_field)
+        match_field = re.search(r"\{[\s\S]*?\}", field_result, re.DOTALL)
+
+        if match_field:
+            field_skills = json.loads(match_field.group())
+            cleaned_field_skills = clean_skill_labels(field_skills)
+            soft_skills_radar(
+                job_skills=cleaned_soft,
+                field_skills=cleaned_field_skills,
+                title=selected_job
+            )
+        else:
+            st.error("Kunde inte skapa fältgenomsnitt.")
+
+
+
+
+
 
 connection.close()
