@@ -53,6 +53,29 @@ def generate_hard_skills(text_blob, job_title):
     """
     return model.generate_content(prompt).text
 
+# Summary of candidate profile based on hard skills
+# Includes personality prompt for AI HR assistant 'HiRe'
+def generate_hard_skills_summary(employer_name, job_title, text_blob):
+
+    prompt = f"""
+    Du är en HR-assistent som analyserar platsannonser åt rekryterare.
+
+    Skriv en professionell sammanfattning på 3-4 meningar riktad till en rekryterare.
+    Beskriv att **{employer_name}** söker en **{job_title}**,
+    och inkludera att kandidaten bör ha följande tekniska färdigheter ("hard skills").
+    Använd **fet stil** på de viktigaste tre färdigheterna.
+
+    Målet är att ge en snabb HR-överblick: beskriv vilken typ av teknisk bakgrund, erfarenhet eller
+    expertis kandidaten bör ha.
+    Formulera svaret på flytande svenska, med en ton som låter som en mänsklig HR-expert.
+    
+    Platsannons:
+
+    {text_blob}
+    """
+    return model.generate_content(prompt).text.strip()
+
+
 # Field average prompt logic
 def generate_field_average_soft_skills(text_blob, field):
     prompt = f"""
@@ -96,3 +119,10 @@ def clean_skill_labels(skills_dict):
     return {mapping.get(k, k): v for k, v in skills_dict.items()}
     # looks up k(key) in mapping directory above and replaces it, and
     # if not found, keeps as is. Keeps original values intact.
+
+# Static + personality-based greeting phrase from "HiRe - the HR assistant"
+def get_ai_intro():
+    return (
+        "\U0001F9D1\u200D\U0001F4BB **Hej, jag heter HiRe och är din Talent Acquisition-assistent.** "
+        "Välj en yrkestitel i rutan nedan så hjälper jag dig att hitta den perfekta kandidaten till jobbet."
+    )
