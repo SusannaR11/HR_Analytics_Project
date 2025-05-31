@@ -30,16 +30,16 @@ def get_employer_name_for_title(connection, title:str, field:str):
     elif field == "Yrken med social inriktning":
         table = "mart.occupation_socialt_arbete"
     else:
-        return "ett företag"
+        return "Ett företag"
     
     query = f"""
-        SELECT employer__name
+        SELECT employer__name AS employer_name
         FROM {table}
         WHERE headline = ? AND employer__name IS NOT NULL 
         LIMIT 1
     """
     result = connection.execute(query, [title]).fetchdf()
-    return result["employer__name"].iloc[0] if not result.empty else "ett företag"
+    return result["employer_name"].iloc[0] if not result.empty else "ett företag"
 
 def get_description_for_title(connection, title: str):
     query = """
