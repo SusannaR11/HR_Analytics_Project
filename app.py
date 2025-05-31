@@ -241,12 +241,12 @@ if selected != "Home":
 # Skill generation
     if selected_job != "Välj ett yrke att analysera:":
         desc = get_description_for_title(connection, selected_job)
-        municipality = get_employer_name_for_title(connection, selected_job, dashboard_field)
-        municipality = df[df['municipality'] == municipality]["municipality"].values
-        st.subheader(f"Ett företag i {municipality} söker en {selected_job}")
+        employer_name = get_employer_name_for_title(connection, selected_job, dashboard_field)
+    
+        st.subheader(f"{employer_name} söker en {selected_job}")
         
         #Gemini summary based on hard skills from selected job
-        personality_summary = generate_hard_skills_summary(municipality, selected_job, desc)
+        personality_summary = generate_hard_skills_summary(employer_name, selected_job, desc)
         st.markdown(f" {personality_summary}")
         st.markdown(f"#### Topp 5 färdigheter för rollen som {selected_job}: ")
 
