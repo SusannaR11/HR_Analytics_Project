@@ -128,10 +128,11 @@ https://ai.google.dev/gemini-api/docs/api-key
 
 ```.env```
 
+2. In your ```.env```store API key:
 
 ```GEMINI_API_KEY=your-api-key-here```
 
-The API key is loaded via ```python-dotenv```
+3. The API key is loaded via ```python-dotenv```
 
 Note: Add ```.env``` to ```.gitignore``` to avoid exposing secrets.
 
