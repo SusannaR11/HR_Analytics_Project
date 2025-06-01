@@ -33,9 +33,9 @@ def get_employer_name_for_title(connection, title:str, field:str):
         return "Ett företag"
     
     query = f"""
-        SELECT employer__name AS employer_name
+        SELECT employer_name 
         FROM {table}
-        WHERE headline = ? AND employer__name IS NOT NULL 
+        WHERE headline = ? AND employer_name IS NOT NULL 
         LIMIT 1
     """
     result = connection.execute(query, [title]).fetchdf()
