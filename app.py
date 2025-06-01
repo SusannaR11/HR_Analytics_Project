@@ -267,7 +267,7 @@ if selected != "Home":
         #Gemini summary based on hard skills from selected job
         personality_summary = generate_hard_skills_summary(employer_name, selected_job, desc)
         st.markdown(f" {personality_summary}")
-        st.markdown(f"#### Topp 5 färdigheter för rollen som {selected_job}: ")
+        st.markdown(f"#### Topp 5 Färdigheter (Hard Skills) för rollen som {selected_job} ")
 
         hard_result = generate_hard_skills(desc, selected_job)
         hard_json = re.search(r"\{[\s\S]*?\}", hard_result, re.DOTALL)
@@ -276,7 +276,7 @@ if selected != "Home":
             for skill, score in hard_skills.items():
                 st.markdown(f"- **{skill}**: {score}/10")
         
-        st.markdown("#### Mjuka värden")
+        st.markdown("#### Mjuka värden (Soft Skills)")
         st.markdown(get_ai_soft_skills())
 
         soft_result = generate_soft_skills(desc, selected_job)

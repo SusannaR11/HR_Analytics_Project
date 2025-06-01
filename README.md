@@ -24,6 +24,8 @@ HiRe™ is a talent intelligence tool for recruiters, powered by real-time data 
 
 ```git clone``` https://github.com/StefanLundberg77/hr_analytics_proj.git
 
+Navigate to project root:
+
 ```cd hr_analytics_proj```
 
 #### 2. Create a virtual environment
@@ -117,6 +119,10 @@ This project uses DBT ```.sql``` tests and schema ```.yml``` files to ensure dat
 - ```dbt run```      # Run models
 
 - ```dbt test```     # Run all tests
+
+```check_materialization_models.py```
+
+- Prints a list of all dbt models with their materialization type for quick debugging from the manifest.json file. Run it directly in your IDE.
 
 ## 🧠 Gemini API Integration
 
