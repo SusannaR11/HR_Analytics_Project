@@ -6,7 +6,7 @@
 # etc
 # You should include at least four meaningful KPI/metrics and visualizations on your dashboard that are able
 # to improve efficiency of the work of talent acquisition specialists in this HR agency.
-
+import pandas as pd
 import streamlit as st
 import plotly_express as px
 import plotly.graph_objects as go
@@ -121,7 +121,7 @@ def soft_skills_radar(job_skills: dict, field_skills: dict, title: str):
     st.plotly_chart(fig, use_container_width=True)
 
  # HARD skills radar plot
-def hard_skills_radar(skills: dict, title: str):
+def hard_skills_radar(job_skills: dict, title: str):
     job_labels = list(job_skills.keys())
     job_scores = list(job_skills.values())
 
