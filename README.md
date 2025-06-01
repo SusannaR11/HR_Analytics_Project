@@ -21,61 +21,36 @@ HiRe™ is a talent intelligence tool for recruiters, powered by real-time data 
 ## 🚀 How to Run
 
 ### 1. Clone the repository
-
-```bash
 git clone https://github.com/StefanLundberg77/hr_analytics_proj.git
 cd hr_analytics_proj
 2. Create a virtual environment
-bash
-Copy
-Edit
+
 uv venv .venv
+
 3. Activate the environment
 Windows:
-
-bash
-Copy
-Edit
 .venv\Scripts\activate
 macOS/Linux:
-
-bash
-Copy
-Edit
 source .venv/bin/activate
+
 4. Install dependencies
 Windows:
-
-bash
-Copy
-Edit
 uv pip install -r requirements.txt
 macOS/Linux:
-
-bash
-Copy
-Edit
 uv pip install -r requirements.mac.txt
 
 5. Fetch data from the JobAds API
-bash
-Copy
-Edit
+
 python load_api.py
 Or run load_api.py directly in your IDE.
 
 6. Run the Streamlit dashboard
-bash
-Copy
-Edit
+
 streamlit run app.py
 
 🔧 Configuration & DuckDB Profile
 Setup your profiles.yml for DBT:
 
-yaml
-Copy
-Edit
 project_HiRe:
   target: dev
   outputs:
@@ -83,6 +58,7 @@ project_HiRe:
       type: duckdb
       path: ../ads_data_warehouse.duckdb
       threads: 1
+
     prod:
       type: duckdb
       path: prod.duckdb
@@ -113,7 +89,6 @@ test_mart_no_duplicates.sql
 test_surrogate_key.sql
 
 ▶️ Run tests:
-```bash
 
 # Full pipeline with models + tests
 dbt build
@@ -146,8 +121,6 @@ Comparing soft skills with field averages using radar charts
 Delivering insights in a polished HR report tone
 
 Launch it with:
-
-```bash
 
 streamlit run app.py
 
