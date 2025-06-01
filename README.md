@@ -1,131 +1,163 @@
-HiRe™ – HR Analytics Dashboard 
- 
-Final Project in Data Engineering 2 @OPA24 (Object Oriented Programming with AI)
+# HiRe™ – HR Analytics Dashboard
 
-Developed as a proof of concept for an interactive HR analytics platform using Streamlit, dbt, DuckDB and Google Gemini.
+_Final Project in Data Engineering 2 @OPA24 (Object-Oriented Programming with AI)_
 
-────────────────────────────
-📝 Project Description  
-────────────────────────────
-HiRe™ is a talent intelligence tool for recruiters, powered by real-time data and AI analysis. It lets you:
+A proof of concept for an interactive HR analytics platform using **Streamlit**, **dbt**, **DuckDB**, and **Google Gemini**.
+
+---
+
+## 📝 Project Description
+
+HiRe™ is a talent intelligence tool for recruiters, powered by real-time data and AI analysis. It enables you to:
 
 - Browse job openings by sector (Data/IT, Social Work, Security)
 - Visualize KPIs and trends in job ads
-- Analyze job descriptions using LLMs (Gemini) for top hard & soft skills
-- Compare role-specific soft skills with field averages using spider charts
-- Present insights in HR-report tone, designed for decision-makers
+- Analyze job descriptions using Gemini (LLM) for top hard & soft skills
+- Compare role-specific soft skills with field averages via spider charts
+- Present insights in an HR-report tone, designed for decision-makers
 
-────────────────────────────
-🚀 How to Run  
-────────────────────────────
+---
 
-Clone the repository:
-> git clone https://github.com/StefanLundberg77/hr_analytics_proj.git
+## 🚀 How to Run
 
-Navigate to the project directory:
-> cd YOUR-REPO
+### 1. Clone the repository
 
-Create a virtual environment:
-> uv venv .venv
+```bash
+git clone https://github.com/StefanLundberg77/hr_analytics_proj.git
+cd hr_analytics_proj
+2. Create a virtual environment
+bash
+Copy
+Edit
+uv venv .venv
+3. Activate the environment
+Windows:
 
-Activate it:
-- Windows:
-  > .venv\Scripts\activate
-- macOS/Linux:
-  > source .venv/bin/activate
+bash
+Copy
+Edit
+.venv\Scripts\activate
+macOS/Linux:
 
-Install dependencies:
-- Windows:
-  > uv pip install -r requirements.txt
-- macOS/Linux:
-  > uv pip install -r requirements.mac.txt
+bash
+Copy
+Edit
+source .venv/bin/activate
+4. Install dependencies
+Windows:
 
-Fetch data from the JobAds API, run the script:
- > python load_api.py
+bash
+Copy
+Edit
+uv pip install -r requirements.txt
+macOS/Linux:
 
-Alternatively, open `load_api.py` in your IDE and run it directly.
+bash
+Copy
+Edit
+uv pip install -r requirements.mac.txt
 
-Run the Streamlit dashboard:
+5. Fetch data from the JobAds API
+bash
+Copy
+Edit
+python load_api.py
+Or run load_api.py directly in your IDE.
 
- > streamlit run app.py
+6. Run the Streamlit dashboard
+bash
+Copy
+Edit
+streamlit run app.py
 
-────────────────────────────
-🔧 Configuration & DuckDB Profile  
-────────────────────────────
+🔧 Configuration & DuckDB Profile
+Setup your profiles.yml for DBT:
 
-Set up `profiles.yml` configuration:
-
-project_HiRe: 
-  target: dev 
-  outputs: 
-    dev: 
+yaml
+Copy
+Edit
+project_HiRe:
+  target: dev
+  outputs:
+    dev:
       type: duckdb
-      path: ../ads_data_warehouse.duckdb # directory pointing to dw, under our project directory
+      path: ../ads_data_warehouse.duckdb
       threads: 1
-
     prod:
       type: duckdb
       path: prod.duckdb
       threads: 4
 
-────────────────────────────
-📄 DBT Testing & Schema Validation  
-────────────────────────────
-This project uses DBT tests and schema YML files to validate the pipeline
+DuckDB is file-based and requires no server or setup.
 
-✔️ Example test types:
-- not_null: ensures required fields are present
-- unique: enforces key uniqueness
-- accepted_values: validates specific fields (e.g. job types)
+📄 DBT Testing & Schema Validation
+This project uses DBT tests and schema .yml files to ensure data quality and pipeline stability.
 
-✔️ Schema files:
-- src_schema.yml
-- dim_schema.yml
+✅ Example test types:
+not_null: Ensures required fields are populated
 
-✔️ DBT SQL Tests:
-- test_mart_duplicate_job_details.sql
-- test_mart_no_duplicates.sql
--test_surrogate_key.sql
+unique: Prevents duplicate records
 
-To run tests and validate your pipeline:
+accepted_values: Validates field value ranges
 
-bash:
-# Run the full pipeline
+📂 Schema files
+src_schema.yml
+
+dim_schema.yml
+
+🧪 SQL Tests
+test_mart_duplicate_job_details.sql
+
+test_mart_no_duplicates.sql
+
+test_surrogate_key.sql
+
+▶️ Run tests:
+```bash
+
+# Full pipeline with models + tests
 dbt build
 
-# Or run step-by-step:
-dbt run      # Runs models
-dbt test     # Runs all schema + data tests
+# Or step-by-step
+dbt run      # Run models
+dbt test     # Run all tests
 
-────────────────────────────
-🧠 Gemini API Integration 
-────────────────────────────
-1. Get your API key from Google Gemini API Console:
-https://ai.google.dev/gemini-api/docs/api-key
+🧠 Gemini API Integration
+Get your API key from Google Gemini API Console
 
-2. Create a .env file in your project root:
+Create a .env file in your project root:
+
+env
 
 GEMINI_API_KEY=your-api-key-here
+The API key is loaded via python-dotenv
 
-Make sure to exclude .env in .gitignore 
+Note: Add .env to .gitignore to avoid exposing secrets
 
-3. Your key is automatically loaded via python-dotenv
+🖥️ Streamlit UI Features
+The project includes a Streamlit dashboard for:
 
-────────────────────────────
-🖥️  Streamlit UI Features
-────────────────────────────
+Visualizing job ads by category and region
 
-This project includes a **Streamlit dashboard** for interactive exploration of job ad data and skill profiling using Gemini (Google's LLM).
+Generating AI-powered skill summaries
 
-Launch with:
+Comparing soft skills with field averages using radar charts
 
-bash
+Delivering insights in a polished HR report tone
+
+Launch it with:
+
+```bash
+
 streamlit run app.py
 
-────────────────────────────
- Contributors
-────────────────────────────
-Stefan Lundberg StefanLundberg77  
-Susanna Rokka   SusannR11 
-Richard Norrman richardnorrman  
-Caroline Helmvee linehanna
+👥 Contributors
+Stefan Lundberg – StefanLundberg77
+
+Susanna Rokka – SusannR11
+
+Richard Norrman – richardnorrman
+
+Caroline Helmvee – linehanna
+
+
