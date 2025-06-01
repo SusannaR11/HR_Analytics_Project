@@ -22,35 +22,43 @@ HiRe™ is a talent intelligence tool for recruiters, powered by real-time data 
 
 #### 1. Clone the repository
 
-git clone https://github.com/StefanLundberg77/hr_analytics_proj.git
-cd hr_analytics_proj
+```git clone``` https://github.com/StefanLundberg77/hr_analytics_proj.git
+
+```cd hr_analytics_proj```
 
 #### 2. Create a virtual environment
 
-uv venv .venv
+```uv venv .venv```
 
 #### 3. Activate the environment
 
 Windows:
-.venv\Scripts\activate
+
+```.venv\Scripts\activate```
+
 macOS/Linux:
-source .venv/bin/activate
+
+```source .venv/bin/activate```
 
 #### 4. Install dependencies
 
 Windows:
-uv pip install -r requirements.txt
+
+```uv pip install -r requirements.txt```
+
 macOS/Linux:
-uv pip install -r requirements.mac.txt
+
+```uv pip install -r requirements.mac.txt```
 
 #### 5. Fetch data from the JobAds API
 
-python load_api.py
-Or run load_api.py directly in your IDE.
+```python load_api.py```
+
+Or run ```load_api.py``` directly in your IDE.
 
 #### 6. Run the Streamlit dashboard
 
-streamlit run app.py
+```streamlit run app.py```
 
 ## 🔧 Configuration & DuckDB Profile
 
@@ -100,12 +108,12 @@ This project uses DBT ```.sql``` tests and schema ```.yml``` files to ensure dat
 
 - test_surrogate_key.sql
 
-▶️ Run tests:
+#### ▶️ Run tests:
 
-#### Full pipeline with models + tests
+#### Full pipeline with models + tests:
 - ```dbt build```
 
-#### Or step-by-step
+#### Or step-by-step:
 - ```dbt run```      # Run models
 
 - ```dbt test```     # Run all tests
@@ -121,9 +129,9 @@ https://ai.google.dev/gemini-api/docs/api-key
 ```.env```
 
 
-GEMINI_API_KEY=your-api-key-here
+```GEMINI_API_KEY=your-api-key-here```
 
-The API key is loaded via python-dotenv
+The API key is loaded via ```python-dotenv```
 
 Note: Add ```.env``` to ```.gitignore``` to avoid exposing secrets.
 
