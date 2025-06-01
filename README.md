@@ -54,8 +54,9 @@ streamlit run app.py
 
 ## 🔧 Configuration & DuckDB Profile
 
-Setup your profiles.yml for DBT:
+Setup your ```profiles.yml``` for DBT:
 
+```yaml
 project_HiRe:
   target: dev
   outputs:
@@ -69,19 +70,21 @@ project_HiRe:
       path: prod.duckdb
       threads: 4
 
+```
+
 DuckDB is file-based and requires no server or setup.
 
 ## 📄 DBT Testing & Schema Validation
 
-This project uses DBT tests and schema .yml files to ensure data quality and pipeline stability.
+This project uses DBT ```.sql``` tests and schema ```.yml``` files to ensure data quality and pipeline stability.
 
 #### ✅ Example test types:
 
-- not_null: Ensures required fields are populated
+- ```not_null```: Ensures required fields are populated
 
-- unique: Prevents duplicate records
+- ```unique```: Prevents duplicate records
 
-- accepted_values: Validates field value ranges
+- ```accepted_values```: Validates field value ranges
 
 #### 📂 Schema files
 
@@ -100,11 +103,12 @@ This project uses DBT tests and schema .yml files to ensure data quality and pip
 ▶️ Run tests:
 
 #### Full pipeline with models + tests
-dbt build
+- ```dbt build```
 
 #### Or step-by-step
-dbt run      # Run models
-dbt test     # Run all tests
+- ```dbt run```      # Run models
+
+- ```dbt test```     # Run all tests
 
 ## 🧠 Gemini API Integration
 
@@ -112,15 +116,16 @@ Get your API key from Google Gemini API Console:
 
 https://ai.google.dev/gemini-api/docs/api-key
 
-Create a .env file in your project root:
+1. Create a .env file in your project root:
 
-env
+```.env```
+
 
 GEMINI_API_KEY=your-api-key-here
 
 The API key is loaded via python-dotenv
 
-Note: Add .env to .gitignore to avoid exposing secrets
+Note: Add ```.env``` to ```.gitignore``` to avoid exposing secrets.
 
 ## 🖥️ Streamlit UI Features
 
@@ -136,7 +141,7 @@ The project includes a Streamlit dashboard for:
 
 ### Launch it with:
 
-streamlit run app.py
+```streamlit run app.py```
 
 #### 👥 Contributors
 
