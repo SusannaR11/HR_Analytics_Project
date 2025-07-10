@@ -45,6 +45,25 @@ def jobsearch_resource(params):
 
         offset += limit
 
+# Wrapper for Dagster for the 3 occupation fields
+# Source: Säkerhet och bevakning
+@dlt.source
+def jobads_source_sakerhet_bevakning():
+    params = {"q": "", "limit": 100, "occupation-field": "E7hm_BLq_fqZ"}
+    return jobsearch_resource(params)
+
+# Source: Socialt arbete
+@dlt.source
+def jobads_source_socialt_arbete():
+    params = {"q": "", "limit": 100, "occupation-field": "GazW_2TU_kJw"}
+    return jobsearch_resource(params)
+
+# Source: Data/IT
+@dlt.source
+def jobads_source_data_it():
+        params = {"q": "", "limit": 100, "occupation-field": "apaJ_2ja_LuF"} 
+        return jobsearch_resource(params)
+
 
 def run_pipeline(query, table_name, occupation_fields):
     pipeline = dlt.pipeline(
