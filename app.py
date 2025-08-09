@@ -33,16 +33,61 @@ genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
 model = genai.GenerativeModel("gemini-2.0-flash")
 
 # -- Funktion för att visa uppdatering av API från Dagster
-def read_update_log(path: Path):
+def read_summary(path: Path):
     try:
         with open(path, encoding="utf-8") as f:
             j= json.load(f)
-        return j.get("status", "unknown"), j.get("updated_at", "-")
+        return j.get("status", "unknown"), j.get("updated_at", "-"), j.get("new_today", {})
     except Exception:
-        return "unknown", "-"
+        return "unknown", "-", {}
+
+def fetch_latest_jobs(connection, selected_field: str, limit: int = 5):
+    table_map = {
+        "Data/IT": "occupation_data_it",
+        "Säkerhet och bevakning": "occupation_sakerhet_bevakning",
+        "Yrken med social inriktning": "occupation_socialt_arbete",
+    }
+    table = table_map.get(selected_field)
+    if not table:
+        return pd.DataFrame()
+
+    candidates = ["publication_date", "posted_at", "created_at", "updated_at", "ingested_at"]
+    cols = connection.execute(f"PRAGMA table_info(mart.{table})").fetchdf()["name"].tolist()
+    ts_col = next((c for c in candidates if c in cols), None)
+    if not ts_col:
+        return pd.DataFrame()
+
+    q = f"""
+        SELECT occupation, employer_name, municipality, {ts_col}
+        FROM mart.{table}
+        ORDER BY ts DESC
+        LIMIT {limit};
+    """    
+    return connection.execute(q).fetchdf()
+
+
+# -- Funktion för att visa nya jobb
+summary_path = Path(__file__).parent / "job_update_summary.json"
+
+field_key_map = {
+    "Data/IT": "Data/IT",
+    "Säkerhet och bevakning": "Säkerhet och bevakning",
+    "Yrken med social inriktning": "Yrken med social inriktning",
+}
+def get_new_vacancies(selected_field:str):
+    """Reads JSON written by Dagster asset"""
+    try:
+        with open(summary_path, encoding="utf-8") as f:
+            j = json.load(f)
+        key= field_key_map.get(selected_field, selected_field)
+        new_count = int(j.get("new_today", {}).get(key, 0))
+        last_updated = j.get("updated_at", "-")
+        return new_count, last_updated
+    except Exception:
+        return 0, "-"
 
 # -- Funktion för att skapa KPI:er med Streamlit-kolumner
-def show_kpis(df):
+def show_kpis(df, new_vacancies: int, last_updated: str):
     if df.empty:
         st.warning("Ingen data hittades för det valda yrkesområdet!")
     else:
@@ -58,7 +103,10 @@ def show_kpis(df):
         cols2[0].metric(label="Yrket med flest jobb", value=top_occupation, border=True)
         cols3 = st.columns(1)
         cols3[0].metric(label="Kommun med flest jobb", value=top_municipality, border=True)
+        cols4 = st.columns(1)
+        cols4[0].metric(label="Antal nya jobb sedan senaste uppdatering", value=new_vacancies, border=True)
 
+        st.caption(f"Senast uppdaterad: {last_updated}")
         # cols = st.columns(3)
         # cols[0].metric(label="Totalt antal jobb", value=total_vacancies, label_visibility="visible", border=True, help=str(df["num_vacancies"].sum()))
         # cols[0].metric(label="Yrket med flest jobb", value=top_occupation, label_visibility="visible", border=True, help=str(df.iloc[0]["occupation"]))
@@ -222,7 +270,7 @@ with st.sidebar:
         }
     )
 # Dagster orchestration status (top right) from success/fail API run
-status, ts = read_update_log(Path(__file__).parent / "update_log.json")
+status, ts, _ = read_summary(Path(__file__).parent / "job_update_summary.json")
 top_cols = st.columns([1, 1, 1, 1])
 with top_cols[-1]:
     st.markdown(
@@ -258,9 +306,18 @@ if selected != "Home":
 
     df = connection.execute(query).fetchdf()
 
+    # read new vacancies from Dagster summary json
+    new_vacancies, last_updated = get_new_vacancies(selected)
+
     st.title(f"{selected} 🌍")
-    show_kpis(df)
+    show_kpis(df, new_vacancies, last_updated)
     chart_dropdown_menu(df)
+
+    # show list of the latest jobs added from API 
+    latest_df = fetch_latest_jobs(connection, selected, limit=5)
+    if not latest_df.empty:
+        st.markdown("### Senaste jobb (5)")
+        st.dataframe(latest_df, hide_index=True, use_container_width=True)
 
 #----- Spider/Radar Chart sektion under visualiseringar ----
 

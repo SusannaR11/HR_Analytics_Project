@@ -11,8 +11,11 @@ import dlt
 from load_api import (jobads_source_data_it, jobads_source_security, jobads_source_social)
 from datetime import datetime
 import json
+import duckdb
 
-LOG_PATH = Path(__file__).parents[1] / "update_log.json" #track update of API refresh
+summary_path = Path(__file__).parents[1] / "job_update_summary.json"
+
+#LOG_PATH = Path(__file__).parents[1] / "update_log.json" #track update of API refresh
 #json logging helpers for tracking update
 def _write_log(status: str, run_id: str, note: str = "", fields=None):
     payload = {
@@ -40,41 +43,50 @@ dbt_resource = DbtCliResource(project_dir=dbt_project_directory, profiles_dir=pr
 
 
 # dlt assets for 3 occupation fields
+# runs only once Dagster executes asset
 # Data / IT dlt Asset
-@dlt_assets(
-    dlt_source=jobads_source_data_it(),
-    dlt_pipeline=dlt.pipeline(
+@dlt_assets
+def dlt_load_data_it(context: dg.AssetExecutionContext, dlt: DagsterDltResource):
+    source=jobads_source_data_it()
+    pipeline=dlt.pipeline(
         pipeline_name="jobads_data_it",
         dataset_name="staging",
         destination=dlt.destinations.duckdb(db_path),
-    ),
-)
-def dlt_load_data_it(context: dg.AssetExecutionContext, dlt: DagsterDltResource):
-    yield from dlt.run(context=context)
+    )
+    yield from dlt.run(
+        context=context,
+        dlt_source=source,
+        dlt_pipeline=pipeline
+        )
 
 # Socialt arbete dlt Asset
-@dlt_assets(
-    dlt_source=jobads_source_social(),
-    dlt_pipeline=dlt.pipeline(
+@dlt_assets
+def dlt_load_social(context: dg.AssetExecutionContext, dlt: DagsterDltResource):
+    source=jobads_source_social()
+    pipeline=dlt.pipeline(
         pipeline_name="jobads_social",
         dataset_name="staging",
         destination=dlt.destinations.duckdb(db_path),
-    ),
-)
-def dlt_load_social(context: dg.AssetExecutionContext, dlt: DagsterDltResource):
-    yield from dlt.run(context=context)
+    )
+    yield from dlt.run(
+        context=context,
+        dlt_source=source,
+        dlt_pipeline=pipeline
+        )
 
 # Säkerhet och bevakning dlt Asset
-@dlt_assets(
-    dlt_source=jobads_source_security(),
-    dlt_pipeline=dlt.pipeline(
+@dlt_assets
+def dlt_load_security(context: dg.AssetExecutionContext, dlt: DagsterDltResource):
+    source=jobads_source_security()
+    pipeline=dlt.pipeline(
         pipeline_name="jobads_security",
         dataset_name="staging",
         destination=dlt.destinations.duckdb(db_path),
-    ),
-)
-def dlt_load_security(context: dg.AssetExecutionContext, dlt: DagsterDltResource):
-    yield from dlt.run(context=context)
+    )
+    yield from dlt.run(
+         context=context,
+         dlt_source=source,
+         dlt_pipeline=pipeline)
 
 # dbt Asset
 dbt_project = DbtProject(project_dir=dbt_project_directory, profiles_dir=profiles_dir)
@@ -114,7 +126,7 @@ job_dbt = dg.define_asset_job(
         ["mart", "occupation_sakerhet_bevakning"],
         ["mart", "occupation_socialt_arbete"],
         )
-        | dg.AssetSelection.keys("write_update_log") # runs logger asset
+        | dg.AssetSelection.keys("write_update_summary") # runs logger asset
 )
 
 job_track = dg.define_asset_job(
@@ -158,9 +170,9 @@ def dbt_failed_sensor(context, dagster_run):
 #Definitions 
 
 defs = dg.Definitions(
-    assets=[dlt_load_data_it, dlt_load_social, dlt_load_security, dbt_models, write_update_log],
+    assets=[dlt_load_data_it, dlt_load_social, dlt_load_security, dbt_models, write_update_summary],
     resources={"dlt": dlt_resource, "dbt": dbt_resource},
-    jobs=[job_api, job_dbt, job_track, job_log],
+    jobs=[job_api, job_dbt, job_track],
     schedules=[schedule_api],
     sensors=[api_success_sensor, dbt_success_sensor, api_failed_sensor, dbt_failed_sensor],
 )
