@@ -17,6 +17,7 @@ from dotenv import load_dotenv
 import json
 import re
 import google.generativeai as genai
+from datetime import datetime
 
 from dbt_code.LLM.dashboard_queries import get_descriptions_for_field, get_job_titles_by_field, get_description_for_title, get_employer_name_for_title
 from dbt_code.LLM.dashboard_logic import generate_field_average_soft_skills, generate_soft_skills, generate_hard_skills, generate_hard_skills_summary, clean_skill_labels, get_ai_intro, get_ai_soft_skills, get_ai_soft_skills_summary
@@ -30,6 +31,15 @@ connection = duckdb.connect(database=str(db_path), read_only=True)
 load_dotenv()
 genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
 model = genai.GenerativeModel("gemini-2.0-flash")
+
+# -- Funktion för att visa uppdatering av API från Dagster
+def read_update_log(path: Path):
+    try:
+        with open(path, encoding="utf-8") as f:
+            j= json.load(f)
+        return j.get("status", "unknown"), j.get("updated_at", "-")
+    except Exception:
+        return "unknown", "-"
 
 # -- Funktion för att skapa KPI:er med Streamlit-kolumner
 def show_kpis(df):
@@ -211,6 +221,16 @@ with st.sidebar:
             },
         }
     )
+# Dagster orchestration status (top right) from success/fail API run
+status, ts = read_update_log(Path(__file__).parent / "update_log.json")
+top_cols = st.columns([1, 1, 1, 1])
+with top_cols[-1]:
+    st.markdown(
+        f"<div style='text-align:right; font-size:12px; color:#666:'>"
+        f"Senast uppdaterad: <strong>{status}</strong> • {ts}"
+        f"</div>",
+        unsafe_allow_html=True,
+    )
 
 st.write(f"Du valde: {selected}")
 # Initial front page with company name and slogan
@@ -307,3 +327,5 @@ if selected != "Home":
                 st.error("Kunde inte skapa fältgenomsnitt.")
 
 connection.close()
+
+#streamlit run app.py

@@ -48,13 +48,13 @@ def jobsearch_resource(params):
 # Wrapper for Dagster for the 3 occupation fields
 # Source: Säkerhet och bevakning
 @dlt.source
-def jobads_source_sakerhet_bevakning():
+def jobads_source_security():
     params = {"q": "", "limit": 100, "occupation-field": "E7hm_BLq_fqZ"}
     return jobsearch_resource(params)
 
 # Source: Socialt arbete
 @dlt.source
-def jobads_source_socialt_arbete():
+def jobads_source_social():
     params = {"q": "", "limit": 100, "occupation-field": "GazW_2TU_kJw"}
     return jobsearch_resource(params)
 
