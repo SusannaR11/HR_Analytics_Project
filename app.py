@@ -33,6 +33,7 @@ genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
 model = genai.GenerativeModel("gemini-2.0-flash")
 
 # -- Funktion för att visa uppdatering av API från Dagster
+# -- visas som en time stamp i övre höger hörn
 def read_summary(path: Path):
     try:
         with open(path, encoding="utf-8") as f:
@@ -58,7 +59,7 @@ def fetch_latest_jobs(connection, selected_field: str, limit: int = 5):
         return pd.DataFrame()
 
     q = f"""
-        SELECT occupation, employer_name, municipality, {ts_col}
+        SELECT occupation, employer_name, municipality, {ts_col} AS ts
         FROM mart.{table}
         ORDER BY ts DESC
         LIMIT {limit};
@@ -271,11 +272,17 @@ with st.sidebar:
     )
 # Dagster orchestration status (top right) from success/fail API run
 status, ts, _ = read_summary(Path(__file__).parent / "job_update_summary.json")
+#formatting of timestamp to easier to read:
+try:
+    ts = datetime.fromisoformat(ts).strftime("%Y-%m-%d %H:%M")
+except Exception:
+    pass # leaves timestamp default if parsing fails
+
 top_cols = st.columns([1, 1, 1, 1])
 with top_cols[-1]:
     st.markdown(
         f"<div style='text-align:right; font-size:12px; color:#666:'>"
-        f"Senast uppdaterad: <strong>{status}</strong> • {ts}"
+        f"Senast uppdaterad: {status} • {ts}"
         f"</div>",
         unsafe_allow_html=True,
     )
