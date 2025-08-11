@@ -138,7 +138,8 @@ job_track = dg.define_asset_job(
         "dlt_jobads_source_data_it_jobsearch_resource",
         "dlt_jobads_source_social_jobsearch_resource",
         "dlt_jobads_source_security_jobsearch_resource",
-    )
+    ),
+    executor_def=multiprocess_executor.configured({"max_concurrent": 1}),
 )
 
 # Schedule

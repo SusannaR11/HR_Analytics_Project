@@ -1,15 +1,15 @@
 {
   "status": "success",
-  "updated_at": "2025-08-10T22:32:46.948412",
-  "run_id": "cd8550c6-072b-4b5f-b47c-6da3ea55c049",
+  "updated_at": "2025-08-11T07:52:30.621501",
+  "run_id": "7e8cf8be-df53-45a0-ad77-8af4af9a182a",
   "totals": {
     "Data/IT": 5426,
     "Säkerhet och bevakning": 1179,
     "Yrken med social inriktning": 6300
   },
   "new_today": {
-    "Data/IT": 5426,
-    "Säkerhet och bevakning": 1179,
-    "Yrken med social inriktning": 6300
+    "Data/IT": 0,
+    "Säkerhet och bevakning": 0,
+    "Yrken med social inriktning": 0
   }
 }
